@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    environment {
+        DOCKERFILE_PATH = "../"
+        DOCKER_REGISTRY_ACCESS_CREDENTIALS=credentials("docker_registry_credentials")
+        INTEGRATION_TESTS_PATH="../integration_tests/"
+    }
+    stages {
+        stage("build") {
+            dir(env.DOCKERFILE_PATH){
+                sh "echo 'Running Build Pipeline'"
+            }
+        }
+        stage("testing & validating") {
+            dir(env.INTEGRATION_TESTS_PATH) {
+                sh "echo 'Running Integration Tests'"
+            }
+        }
+        stage("deployment") {
+            sh "echo 'Deploying Application'"
+        }
+    }
+}

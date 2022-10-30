@@ -1,0 +1,13 @@
+apiVersion: k8s.io/networking 
+kind: Ingress
+metadata:
+  name: application-ingress-network 
+  namespace: application-namespace 
+rules:
+  http:
+    path: / 
+    pathType: Prefix 
+      backend:
+        - servicePort: 3000
+          protocol: TCP 
+          
