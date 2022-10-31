@@ -1,11 +1,31 @@
 <template>
-<div></div>
+
+<div class="table">
+
+  <!-- Inserting the Upper Columns -->
+  <div class="upperColumns">
+    <draggable v-model="UpperColumns">
+      <table-sheet-upper-column-component v-for="(Column, index) in UpperColumns" :key="index" :UpperColumn="Column" />
+    </draggable>
+  </div>
+
+
+  <!-- Inserting the Side Columns -->
+
+  <div class="sideColumns">
+    <draggable v-model="SideColumns">
+      <table-sheet-side-column-component v-for="(Column, index) in SideColumns" :key="index" :SideColumn="Column" />
+    </draggable>
+  </div>
+
+</div>
+
 </template>
 
 <script>
 
+import draggable from "vuedraggable";
 import { mapState } from "vuex";
-
 
 class CustomizedTableExtensionConverter {
   // Converts the Customized Table from the JSON to the CSV or XLSX
@@ -93,18 +113,32 @@ class ColumnManager {
     }
 }
 
-
 export default {
     name: "DynamicTableComponent",
     props: ["UploadedFileTable"],
     data() {
         return {
             FileName: null,
-            upper_columns: [], // * has following side component { }
-            side_columns: [], // * has following side component { }
+            UpperColumns: [], // * has following side component { }
+            SideColumns: [], // * has following side component { }
         }
     },
+    components: {
+      draggable
+    },
+    mounted() {
+      this.InsertUpperColumns()
+      this.InsertSideColumns()
+    },
     methods: {
+        InsertUpperColumns() {
+          // Inserting the Initial Values for the Table At the Upper Columns
+          this.UpperColumns = this.CustomTable["upperColumns"]
+        },
+        InsertSideColumns() {
+          // Inserting the Initial Values for the Table At the Side Columns
+          this.SideColumns = this.CustomTable["sideColumns"]
+        },
         DownloadCustomizedTable() {
           // Downloading the Customized Table in `CSV` Format, to the Client Browser
           let downloadManager = new DownloadTableManager(this)
@@ -137,7 +171,6 @@ export default {
           let newPositionIndex = this.upper_columns[columnIdentifier]["Position"];
           let ColumnManager = new ColumnManager()
           ColumnManager.ChangeUpperColumnPosition(columnIdentifier, newPositionIndex);
-
         },
 
         ChangeSideColumnPosition(event) {

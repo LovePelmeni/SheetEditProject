@@ -41,4 +41,3 @@ metadata:
 data:
   APPLICATION_HOST: localhost
   APPLICATION_PORT: 8000
-
