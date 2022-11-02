@@ -10,4 +10,3 @@ rules:
       backend:
         - servicePort: 3000
           protocol: TCP 
-          

@@ -23,14 +23,31 @@ spec:
       labels: 
         app: app 
     spec:
+      initContainers:
+        - name: nginx-web-server
+          image: nginx
+          ports:
+            - name: http 
+              containerPort: 3000
+              protocol: TCP 
+          volumeMounts:
+            - name: nginx-configuration 
+              subPath: nginx.conf
+
       containers:
         - name: frontend-application
           image: crazycoderrr/custom_table_editor 
           ports:
             - name: http 
-              port: 3000
+              port: 3010
               protocol: TCP 
           imagePullPolicy: IfNotPresent 
+      volumes:
+        - name: nginx-configuration 
+          configMapRef:
+            - name: nginx-configuration-map 
+              items:
+                - key: nginx.conf
 --- 
 
 apiVersion: v1
@@ -41,3 +58,27 @@ metadata:
 data:
   APPLICATION_HOST: localhost
   APPLICATION_PORT: 8000
+
+--- 
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configuration-map
+  namespace: application-namespace 
+nginx.conf: | 
+  events {
+    worker_connections 4096;
+  }
+  http {
+    server {
+      listen 3010; 
+      location / {
+        proxy_set_header Host $http_host; 
+        proxy_set_header Upgrade $http_upgrade;
+        add_header Access-Control-Allow-Origin $http_origin;
+        add_header Access-Control-Allow-Credentials true;
+        add_header Access-Control-Allow-Methods "GET,PUT,OPTIONS,POST,DELETE";
+      }
+    }
+  }

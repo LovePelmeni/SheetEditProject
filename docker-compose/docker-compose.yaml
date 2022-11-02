@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+
+  nginx_web_server:
+    - container_name: nginx-server 
+      image: nginx  
+      ports:
+        - "3000:3000"
+      volumes:
+        - ../nginx/nginx.conf:/etc/nginx/nginx.conf 
+      networks: 
+        - project-network 
+    
+  application:
+    - container_name: application-server  
+      image: crazycoderrr/sheet-editor-project
+      ports:
+        - "3000:3000"
+      networks:
+        - project-network 
+
+networks:
+  project-network:
+    name: project-network
+    external: true
